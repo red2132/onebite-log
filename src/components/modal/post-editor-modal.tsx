@@ -3,14 +3,32 @@ import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 import { usePostEditorModal } from "@/store/post-editor-modal";
 import { useEffect, useRef, useState } from "react";
+import { useCreatePost } from "@/hooks/mutations/post/use-create-post";
+import { toast } from "sonner";
 
 export default function PostEditorModal() {
   const { isOpen, close } = usePostEditorModal();
   const [content, setContent] = useState("");
+  const { mutate: createPost, isPending: isCreatePostPending } = useCreatePost({
+    onSuccess: () => {
+      close();
+    },
+    onError: (error) => {
+      toast.error("게시물 생성에 실패했습니다", {
+        position: "top-center",
+      });
+    },
+  });
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleCloseModal = () => {
     close();
+  };
+
+  const handleCreatePostClick = () => {
+    if (content.trim() === "") return;
+    createPost(content);
   };
 
   useEffect(() => {
@@ -37,11 +55,22 @@ export default function PostEditorModal() {
           onChange={(e) => setContent(e.target.value)}
           className="max-h-125 min-h-25 focus:outline-none"
           placeholder="무슨 일이 있었나요?"
+          disabled={isCreatePostPending}
         />
-        <Button variant={"outline"} className="cursor-pointer">
+        <Button
+          variant={"outline"}
+          className="cursor-pointer"
+          disabled={isCreatePostPending}
+        >
           <ImageIcon /> 이미지 추가
         </Button>
-        <Button className="cursor-pointer">저장</Button>
+        <Button
+          className="cursor-pointer"
+          onClick={handleCreatePostClick}
+          disabled={isCreatePostPending}
+        >
+          저장
+        </Button>
       </DialogContent>
     </Dialog>
   );
