@@ -27,7 +27,7 @@ export default function ProfileEditorModal() {
     actions: { close },
   } = useProfileEditorModal();
 
-  const { mutate: updatedProfile, isPending: isUpdateProfilePending } =
+  const { mutate: updateProfile, isPending: isUpdateProfilePending } =
     useUpdateProfile({
       onSuccess: () => {
         close();
