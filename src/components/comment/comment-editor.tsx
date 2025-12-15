@@ -21,13 +21,20 @@ export default function CommentEditor({ postId }: { postId: number }) {
 
   const handleSubmitClick = () => {
     if (content.trim() === "") return;
+
+    createComment({
+      postId,
+      content,
+    });
   };
 
   return (
     <div className="flex flex-col gap-2">
       <Textarea value={content} onChange={(e) => setContent(e.target.value)} />
       <div className="flex justify-end">
-        <Button onClick={handleSubmitClick}>작성</Button>
+        <Button onClick={handleSubmitClick} disabled={isCreateCommentPending}>
+          작성
+        </Button>
       </div>
     </div>
   );
